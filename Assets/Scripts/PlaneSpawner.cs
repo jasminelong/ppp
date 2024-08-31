@@ -297,6 +297,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                     if (gridMaterial != null)
                     {
                         Renderer renderer = deskPlane.GetComponent<Renderer>();
+                        renderer.enabled = false; // 禁用渲染器，完全隐藏平面
                         renderer.material = gridMaterial;
                         //renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
                         renderer.material.SetFloat("_Mode", 2); // 2 = Transparent mode
@@ -374,9 +375,9 @@ public class PlaneAndObjectSpawner : MonoBehaviour
         //float RestaurantTrScaleX = RestaurantTr.localScale.x;
         float RestaurantTrScaleX = 0.11f;
 
-        GameObject newObject1 = Instantiate(bottle1, new Vector3(objectPosition.x - 0.5f, objectPosition.y, objectPosition.z+0.15f), Quaternion.identity);
+        //GameObject newObject1 = Instantiate(bottle1, new Vector3(objectPosition.x - 0.5f, objectPosition.y, objectPosition.z+0.15f), Quaternion.identity);
         //newObject1.transform.localScale = new Vector3(newObject1.transform.localScale.x * RestaurantTrScaleX, newObject1.transform.localScale.y * RestaurantTrScaleX, newObject1.transform.localScale.z * RestaurantTrScaleX);
-        newObject1.transform.position = new Vector3(newObject1.transform.position.x, newObject1.transform.position.y , newObject1.transform.position.z);
+        //newObject1.transform.position = new Vector3(newObject1.transform.position.x, newObject1.transform.position.y , newObject1.transform.position.z);
 
         GameObject newObject2 = Instantiate(bottle2, new Vector3(deskPosition.x - 0.2f, deskPosition.y, deskPosition.z+0.1f), Quaternion.identity);
         newObject2.transform.localScale = new Vector3(newObject2.transform.localScale.x * RestaurantTrScaleX, newObject2.transform.localScale.y * RestaurantTrScaleX, newObject2.transform.localScale.z * RestaurantTrScaleX);
