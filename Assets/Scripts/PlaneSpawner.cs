@@ -8,6 +8,7 @@ using System.Linq;
 
 public class PlaneAndObjectSpawner : MonoBehaviour
 {
+    public SendSerialData sendSerialData;
     public Camera cameraTr;
     public Material gridMaterial; // 网格材质
     public GameObject objectToSpawn; // 要生成的对象
@@ -110,6 +111,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                 {
                     // 检测到嘴巴闭合，并且时间间隔在合理范围内
                     Debug.Log("检测到吃东西的动作！");
+                    sendSerialData.SendData("Eated");
                     isMouthOpen = false; // 重置状态
                     audioSource.Play(); // 播放音频
                     SpawnedObject.SetActive(false); // 禁用对象
@@ -296,7 +298,16 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                     {
                         Renderer renderer = deskPlane.GetComponent<Renderer>();
                         renderer.material = gridMaterial;
-                        renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0.5f); // 设置透明度
+                        //renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
+                        renderer.material.SetFloat("_Mode", 2); // 2 = Transparent mode
+                        renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
+                        renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                        renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                        renderer.material.SetInt("_ZWrite", 0);
+                        renderer.material.DisableKeyword("_ALPHATEST_ON");
+                        renderer.material.EnableKeyword("_ALPHABLEND_ON");
+                        renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        renderer.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
                     }
                     // 使生成的平面仅用于可视化（如需要可以禁用其碰撞器）
                     //Destroy(deskPlane.GetComponent<Collider>());
@@ -359,12 +370,13 @@ public class PlaneAndObjectSpawner : MonoBehaviour
     }
     void bottleSpawn()
     {
-        Transform RestaurantTr = Restaurant.transform;
-        float RestaurantTrScaleX = RestaurantTr.localScale.x;
+        //Transform RestaurantTr = Restaurant.transform;
+        //float RestaurantTrScaleX = RestaurantTr.localScale.x;
+        float RestaurantTrScaleX = 0.11f;
 
-        //GameObject newObject1 = Instantiate(bottle1, new Vector3(objectPosition.x - 0.3f, objectPosition.y, objectPosition.z+0.1f), Quaternion.identity);
-        //newObject1.transform.localScale = new Vector3(newObject1.transform.localScale.x * RestaurantTrScaleX, newObject1.transform.localScale.y * RestaurantTrScaleX, newObject1.transform.localScale.z * RestaurantTrScaleX);
-        //newObject1.transform.position = new Vector3(newObject1.transform.position.x, newObject1.transform.position.y +newObject1.transform.localScale.y * 1.3f, newObject1.transform.position.z);
+        GameObject newObject1 = Instantiate(bottle1, new Vector3(objectPosition.x - 0.3f, objectPosition.y, objectPosition.z+0.1f), Quaternion.identity);
+        newObject1.transform.localScale = new Vector3(newObject1.transform.localScale.x * RestaurantTrScaleX, newObject1.transform.localScale.y * RestaurantTrScaleX, newObject1.transform.localScale.z * RestaurantTrScaleX);
+        newObject1.transform.position = new Vector3(newObject1.transform.position.x, newObject1.transform.position.y , newObject1.transform.position.z);
 
         GameObject newObject2 = Instantiate(bottle2, new Vector3(deskPosition.x - 0.2f, deskPosition.y, deskPosition.z+0.1f), Quaternion.identity);
         newObject2.transform.localScale = new Vector3(newObject2.transform.localScale.x * RestaurantTrScaleX, newObject2.transform.localScale.y * RestaurantTrScaleX, newObject2.transform.localScale.z * RestaurantTrScaleX);
