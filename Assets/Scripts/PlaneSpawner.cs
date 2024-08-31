@@ -14,14 +14,14 @@ public class PlaneAndObjectSpawner : MonoBehaviour
     private GameObject SpawnedObject; // 已经生成的对象
     private Vector3 objectPosition;// 要生成的对象的位置
     public OVRFaceExpressions faceExpressions;
-
+    public AudioSource audioSource;
 
     public OVRHand ovrHand;
     private OVRSkeleton ovrSkeleton;
     private float bendThresholdAngle = 15.0f; // 角度阈值，降低阈值以提高检测敏感性
     private Dictionary<OVRSkeleton.BoneId, Transform> boneTransforms = new Dictionary<OVRSkeleton.BoneId, Transform>();
     private bool skeletonInitialized = false;
-    private float objectOffsetFromHand = 0.08f; // 对象与手部的偏移距离
+    private float objectOffsetFromHand = 0.1f; // 对象与手部的偏移距离
     private float followSpeed = 5f;     // 跟随速度
     private float rotationSpeed = 5f;   // 旋转速度
     private float inertia = 0.1f;       // 惯性系数
@@ -30,6 +30,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
     private Vector3 lastKnownPosition;
     private bool isHandTracked = true;
+    private Vector3 deskPosition;
 
     private float attachmentDistance = 0.15f; // 少于这个距离的时候然对象跟随手部移动
     private bool isAttached = false; // 用于判断对象是否已经附加
@@ -39,7 +40,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
     private bool isMouthOpen = false;
     private float mouthOpenThreshold = 0.5f;
     private float mouthOpenTime = 0f;
-    private float requiredCloseTime = 0.5f; // 需要嘴巴闭合的时间来确认吃东西的动作
+    private float requiredCloseTime = 0.1f; // 需要嘴巴闭合的时间来确认吃东西的动作
 
     public GameObject Restaurant;
     private GameObject deskPlane;
@@ -104,12 +105,13 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                         mouthOpenTime = Time.time;
                     }
                 }
-                else if (isMouthOpen && Time.time - mouthOpenTime >= requiredCloseTime)
+                //else if (isMouthOpen && Time.time - mouthOpenTime >= requiredCloseTime)
+                else if (isMouthOpen)
                 {
                     // 检测到嘴巴闭合，并且时间间隔在合理范围内
                     Debug.Log("检测到吃东西的动作！");
                     isMouthOpen = false; // 重置状态
-
+                    audioSource.Play(); // 播放音频
                     SpawnedObject.SetActive(false); // 禁用对象
                     
                     StartCoroutine(SpawnObjectAfterDelay());  // 开始协程，在等待指定时间后生成对象
@@ -273,18 +275,17 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                 {
                     // 获取桌面锚点的位置和大小
                     //Vector3 deskPosition = deskAnchor.PlaneRect.Value.center;
-                    Vector3 deskPosition = deskAnchor.transform.position;
+                    deskPosition = deskAnchor.transform.position;
                     Vector3 anchorSize = deskAnchor.PlaneRect.Value.size;
                     Quaternion deskRotation = deskAnchor.transform.rotation; // 获取锚点的旋转信息
 
                     Debug.Log("---x---" + deskPosition.x + "---y---" + deskPosition.y + "---z---" + deskPosition.z);
                     Debug.Log("锚点位置: " + deskPosition);
-
                     Debug.Log("桌面平面尺寸: " + anchorSize.x + "----" + anchorSize.y);
 
                     // 创建一个平面并将其定位到桌面锚点的位置
                     deskPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-                    deskPlane.transform.position = new Vector3(deskPosition.x, deskPosition.y, deskPosition.z); // 保持与锚点一致的高度
+                    deskPlane.transform.position = new Vector3(deskPosition.x, deskPosition.y, deskPosition.z+0.1f); // 保持与锚点一致的高度
                     //deskPlane.transform.rotation = deskRotation; // 设置平面的旋转，使其方向与锚点一致
 
                     // 根据锚点的尺寸调整平面的大小
@@ -306,7 +307,8 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                                     }*/
                     // 在平面上生成一个对象，距离摄像机水平距离40cm
                     objectPosition = cameraTransform.position + cameraTransform.forward * 0.5f; // 水平距离40cm
-                    objectPosition.y = deskPosition.y; // 保持与平面一致的高度
+                   // objectPosition.y = deskPosition.y; // 保持与平面一致的高度
+                    objectPosition.y = deskPosition.y + objectToSpawn.transform.localScale.y*2f; // 保持与平面一致的高度
                     // 在桌面上生成虚拟对象
                     SpawnedObject = Instantiate(objectToSpawn, objectPosition, Quaternion.identity);
                 }
@@ -360,19 +362,19 @@ public class PlaneAndObjectSpawner : MonoBehaviour
         Transform RestaurantTr = Restaurant.transform;
         float RestaurantTrScaleX = RestaurantTr.localScale.x;
 
-        GameObject newObject1 = Instantiate(bottle1, new Vector3(objectPosition.x - 0.3f, objectPosition.y, objectPosition.z), Quaternion.identity);
-        newObject1.transform.localScale = new Vector3(newObject1.transform.localScale.x * RestaurantTrScaleX, newObject1.transform.localScale.y * RestaurantTrScaleX, newObject1.transform.localScale.z * RestaurantTrScaleX);
-        newObject1.transform.position = new Vector3(newObject1.transform.position.x, newObject1.transform.position.y +newObject1.transform.localScale.y * 1.3f, newObject1.transform.position.z);
+        //GameObject newObject1 = Instantiate(bottle1, new Vector3(objectPosition.x - 0.3f, objectPosition.y, objectPosition.z+0.1f), Quaternion.identity);
+        //newObject1.transform.localScale = new Vector3(newObject1.transform.localScale.x * RestaurantTrScaleX, newObject1.transform.localScale.y * RestaurantTrScaleX, newObject1.transform.localScale.z * RestaurantTrScaleX);
+        //newObject1.transform.position = new Vector3(newObject1.transform.position.x, newObject1.transform.position.y +newObject1.transform.localScale.y * 1.3f, newObject1.transform.position.z);
 
-        GameObject newObject2 = Instantiate(bottle2, new Vector3(objectPosition.x - 0.15f, objectPosition.y, objectPosition.z+0.1f), Quaternion.identity);
+        GameObject newObject2 = Instantiate(bottle2, new Vector3(deskPosition.x - 0.2f, deskPosition.y, deskPosition.z+0.1f), Quaternion.identity);
         newObject2.transform.localScale = new Vector3(newObject2.transform.localScale.x * RestaurantTrScaleX, newObject2.transform.localScale.y * RestaurantTrScaleX, newObject2.transform.localScale.z * RestaurantTrScaleX);
         newObject2.transform.position = new Vector3(newObject2.transform.position.x, newObject2.transform.position.y + newObject2.transform.localScale.y * 1f, newObject2.transform.position.z);
 
-        GameObject newObject3 = Instantiate(bottle3, new Vector3(objectPosition.x - 0.4f, objectPosition.y, objectPosition.z), Quaternion.identity);
+        GameObject newObject3 = Instantiate(bottle3, new Vector3(deskPosition.x - 0.2f, deskPosition.y, deskPosition.z), Quaternion.identity);
         newObject3.transform.localScale = new Vector3(newObject3.transform.localScale.x * RestaurantTrScaleX, newObject3.transform.localScale.y * RestaurantTrScaleX, newObject3.transform.localScale.z * RestaurantTrScaleX);
         newObject3.transform.position = new Vector3(newObject3.transform.position.x, newObject3.transform.position.y + newObject3.transform.localScale.y * 1f, newObject3.transform.position.z);
 
-        GameObject newObject4 = Instantiate(bottle4, new Vector3(objectPosition.x - 0.3f, objectPosition.y, objectPosition.z+0.1f), Quaternion.identity);
+        GameObject newObject4 = Instantiate(bottle4, new Vector3(deskPosition.x - 0.15f, deskPosition.y, deskPosition.z), Quaternion.identity);
         newObject4.transform.localScale = new Vector3(newObject4.transform.localScale.x * RestaurantTrScaleX, newObject4.transform.localScale.y * RestaurantTrScaleX, newObject4.transform.localScale.z * RestaurantTrScaleX);
         newObject4.transform.position = new Vector3(newObject4.transform.position.x, newObject4.transform.position.y + newObject4.transform.localScale.y * 1f, newObject4.transform.position.z);
     }
