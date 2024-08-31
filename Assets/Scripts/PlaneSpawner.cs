@@ -374,20 +374,20 @@ public class PlaneAndObjectSpawner : MonoBehaviour
         //float RestaurantTrScaleX = RestaurantTr.localScale.x;
         float RestaurantTrScaleX = 0.11f;
 
-        GameObject newObject1 = Instantiate(bottle1, new Vector3(objectPosition.x - 0.3f, objectPosition.y, objectPosition.z+0.1f), Quaternion.identity);
-        newObject1.transform.localScale = new Vector3(newObject1.transform.localScale.x * RestaurantTrScaleX, newObject1.transform.localScale.y * RestaurantTrScaleX, newObject1.transform.localScale.z * RestaurantTrScaleX);
+        GameObject newObject1 = Instantiate(bottle1, new Vector3(objectPosition.x - 0.5f, objectPosition.y, objectPosition.z+0.15f), Quaternion.identity);
+        //newObject1.transform.localScale = new Vector3(newObject1.transform.localScale.x * RestaurantTrScaleX, newObject1.transform.localScale.y * RestaurantTrScaleX, newObject1.transform.localScale.z * RestaurantTrScaleX);
         newObject1.transform.position = new Vector3(newObject1.transform.position.x, newObject1.transform.position.y , newObject1.transform.position.z);
 
         GameObject newObject2 = Instantiate(bottle2, new Vector3(deskPosition.x - 0.2f, deskPosition.y, deskPosition.z+0.1f), Quaternion.identity);
         newObject2.transform.localScale = new Vector3(newObject2.transform.localScale.x * RestaurantTrScaleX, newObject2.transform.localScale.y * RestaurantTrScaleX, newObject2.transform.localScale.z * RestaurantTrScaleX);
         newObject2.transform.position = new Vector3(newObject2.transform.position.x, newObject2.transform.position.y + newObject2.transform.localScale.y * 1f, newObject2.transform.position.z);
 
-        GameObject newObject3 = Instantiate(bottle3, new Vector3(deskPosition.x - 0.2f, deskPosition.y, deskPosition.z), Quaternion.identity);
+        /*GameObject newObject3 = Instantiate(bottle3, new Vector3(deskPosition.x - 0.2f, deskPosition.y, deskPosition.z), Quaternion.identity);
         newObject3.transform.localScale = new Vector3(newObject3.transform.localScale.x * RestaurantTrScaleX, newObject3.transform.localScale.y * RestaurantTrScaleX, newObject3.transform.localScale.z * RestaurantTrScaleX);
         newObject3.transform.position = new Vector3(newObject3.transform.position.x, newObject3.transform.position.y + newObject3.transform.localScale.y * 1f, newObject3.transform.position.z);
 
         GameObject newObject4 = Instantiate(bottle4, new Vector3(deskPosition.x - 0.15f, deskPosition.y, deskPosition.z), Quaternion.identity);
         newObject4.transform.localScale = new Vector3(newObject4.transform.localScale.x * RestaurantTrScaleX, newObject4.transform.localScale.y * RestaurantTrScaleX, newObject4.transform.localScale.z * RestaurantTrScaleX);
-        newObject4.transform.position = new Vector3(newObject4.transform.position.x, newObject4.transform.position.y + newObject4.transform.localScale.y * 1f, newObject4.transform.position.z);
+        newObject4.transform.position = new Vector3(newObject4.transform.position.x, newObject4.transform.position.y + newObject4.transform.localScale.y * 1f, newObject4.transform.position.z);*/
     }
 }

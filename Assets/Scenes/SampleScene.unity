@@ -261,7 +261,7 @@ MonoBehaviour:
   audioSource: {fileID: 337372970}
   ovrHand: {fileID: 1722657411}
   Restaurant: {fileID: 0}
-  bottle1: {fileID: 4942815533528136393, guid: dabbd57e1f69efc4f84cf19230fdea4b, type: 3}
+  bottle1: {fileID: 5566376172985385015, guid: 68d8f8697b28c7c44a9387d9ac64b497, type: 3}
   bottle2: {fileID: 5218775785321610618, guid: 394c2044432d00f4081644bd756dbaa8, type: 3}
   bottle3: {fileID: 5538389914758975819, guid: 875e354c65fff21438d25b63fee12511, type: 3}
   bottle4: {fileID: 5538389914758975819, guid: 875e354c65fff21438d25b63fee12511, type: 3}
