@@ -298,7 +298,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                     {
                         Renderer renderer = deskPlane.GetComponent<Renderer>();
                         renderer.enabled = false; // 禁用渲染器，完全隐藏平面
-                        renderer.material = gridMaterial;
+                /*        renderer.material = gridMaterial;
                         //renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
                         renderer.material.SetFloat("_Mode", 2); // 2 = Transparent mode
                         renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
@@ -308,7 +308,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                         renderer.material.DisableKeyword("_ALPHATEST_ON");
                         renderer.material.EnableKeyword("_ALPHABLEND_ON");
                         renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        renderer.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        renderer.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;*/
                     }
                     // 使生成的平面仅用于可视化（如需要可以禁用其碰撞器）
                     //Destroy(deskPlane.GetComponent<Collider>());
