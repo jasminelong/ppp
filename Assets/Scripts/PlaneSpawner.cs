@@ -84,19 +84,20 @@ public class PlaneAndObjectSpawner : MonoBehaviour
         }
 
     }
+    float weightBuf;
     void DetectEatingAction()
     {
         // 检测对象与摄像头之间的距离
         Vector3 cameraPosition = cameraTr.transform.position;
         float distanceToMouth = Vector3.Distance(SpawnedObject.transform.position, cameraPosition);
-
         if (distanceToMouth < eatDistance)
         {
             if (faceExpressions != null && faceExpressions.ValidExpressions)
             {
                 // 获取下巴开合的权重值
                 float jawDropWeight = faceExpressions.GetWeight(OVRFaceExpressions.FaceExpression.JawDrop);
-
+                Debug.Log("1111111111-----------"+ jawDropWeight);
+                Debug.Log("111111111122222-----------" + (Time.time - mouthOpenTime));
                 if (jawDropWeight > mouthOpenThreshold)
                 {
                     if (!isMouthOpen)
@@ -113,6 +114,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                     Debug.Log("检测到吃东西的动作！");
                     sendSerialData.SendData("Eated");
                     isMouthOpen = false; // 重置状态
+                    audioSource.pitch = (1f- jawDropWeight)/ (Time.time - mouthOpenTime+0.1f);
                     audioSource.Play(); // 播放音频
                     SpawnedObject.SetActive(false); // 禁用对象
 
