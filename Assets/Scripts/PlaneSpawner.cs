@@ -115,7 +115,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                     isMouthOpen = false; // 重置状态
                     audioSource.Play(); // 播放音频
                     SpawnedObject.SetActive(false); // 禁用对象
-                    
+
                     StartCoroutine(SpawnObjectAfterDelay());  // 开始协程，在等待指定时间后生成对象
                 }
             }
@@ -169,30 +169,38 @@ public class PlaneAndObjectSpawner : MonoBehaviour
             Debug.Log($"Ring Finger Bent: {isRingFingerBent}");
             Debug.Log($"Pinky Finger Bent: {isPinkyFingerBent}");
 
-            Transform Hand_Middle3Transform = GetBoneTransform(OVRSkeleton.BoneId.Hand_Middle3);
-            if (isMiddleFingerBent&& isRingFingerBent&& isPinkyFingerBent && !isAttached) 
+            Transform Hand_Thumb2Transform = GetBoneTransform(OVRSkeleton.BoneId.Hand_Thumb2);
+            // 获取食指的三个关键骨骼点
+            Transform proximal = GetBoneTransform(OVRSkeleton.BoneId.Hand_Index1);  // 指根
+            Transform middle = GetBoneTransform(OVRSkeleton.BoneId.Hand_Index2);    // 指节
+            Transform tip = GetBoneTransform(OVRSkeleton.BoneId.Hand_Index3);       // 指尖
+            if (isMiddleFingerBent && isRingFingerBent && isPinkyFingerBent && !isAttached)
             {
+                // 计算形成面的向量
+                Vector3 vector1 = middle.position - proximal.position;
+                Vector3 vector2 = tip.position - middle.position;
+
+                // 计算法向量（叉积）
+                Vector3 normal = Vector3.Cross(vector1, vector2).normalized;
+
+                // 计算平面方程中的常数项 D
+                float D = -Vector3.Dot(normal, middle.position);
+                // 点到平面的距离公式: d = |Ax + By + Cz + D| / sqrt(A^2 + B^2 + C^2)
+                float distance = Mathf.Abs(normal.x * SpawnedObject.transform.position.x + normal.y * SpawnedObject.transform.position.y + normal.z * SpawnedObject.transform.position.z + D) /
+                                 Mathf.Sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
+                Debug.Log("distance------" + distance);
                 // 计算手和对象之间的距离
-                float distanceToHand = Vector3.Distance(Hand_Middle3Transform.position, SpawnedObject.transform.position);
+                float distanceToHand = Vector3.Distance(Hand_Thumb2Transform.position, SpawnedObject.transform.position);
                 // 获取对象的 Collider
                 MeshCollider meshCollider = SpawnedObject.GetComponent<MeshCollider>();
-                // 获取手指的正前方向
-                Vector3 forwardDirection = Hand_Middle3Transform.forward.normalized;
-                    
-                // 使用世界坐标系中的上方向作为参考方向（你也可以选择其他方向）
-                Vector3 upDirection = Vector3.up;
-                // 计算垂直于手指正前方向的向量
-                Vector3 perpendicularDirection = Vector3.Cross(forwardDirection, upDirection).normalized;
-                // 获取手指的反方向
-                //Vector3 backwardDirection = -forwardDirection;
                 float distanceToSurface = distanceToHand; // 默认值为中心距离
                 if (meshCollider != null)
                 {
                     // 使用 Mesh Collider 的边界盒尺寸来近似对象的半径
                     float objectRadius = meshCollider.bounds.extents.magnitude;
 
-                    // 计算手指尖到对象表面的距离
-                     distanceToSurface = Mathf.Max(0, distanceToHand - objectRadius);
+                    // 计算大拇指到对象表面的距离
+                    distanceToSurface = Mathf.Max(0, distanceToHand - objectRadius);
                 }
                 else
                 {
@@ -200,24 +208,24 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                 }
 
                 if (distanceToSurface <= attachmentDistance)
-                    {
+                {
                     isAttached = true;
                     // 将对象附加到手部对象上
-                    SpawnedObject.transform.SetParent(Hand_Middle3Transform);
-                    // 计算相对于手部的垂直方向的偏移位置
-                    Vector3 offsetPosition = forwardDirection * objectOffsetFromHand;
-
+                    SpawnedObject.transform.SetParent(Hand_Thumb2Transform);
+                    Vector3 offsetPosition = normal * objectOffsetFromHand;
                     // 将对象的局部位置设置为计算出的偏移位置
-                    //SpawnedObject.transform.localPosition = offsetPosition;
                     SpawnedObject.transform.localPosition = Vector3.SmoothDamp(SpawnedObject.transform.localPosition, offsetPosition, ref velocity, 0.2f);
                     // 重置对象的局部旋转
                     SpawnedObject.transform.localRotation = Quaternion.identity;
 
                 }
- 
+
             }
         }
     }
+
+
+
     // 检查手是否在摄像头视野内
     bool IsHandVisible(Transform IndexTipTransform)
     {
@@ -261,7 +269,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
     void OnSceneLoaded()
     {
         Transform cameraTransform = cameraTr.transform;
-        Debug.Log("cameraTr.transform-----"+ cameraTr.transform.position);
+        Debug.Log("cameraTr.transform-----" + cameraTr.transform.position);
         MRUKRoom currentRoom = MRUK.Instance.GetCurrentRoom();
         if (currentRoom != null)
         {
@@ -287,28 +295,28 @@ public class PlaneAndObjectSpawner : MonoBehaviour
 
                     // 创建一个平面并将其定位到桌面锚点的位置
                     deskPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-                    deskPlane.transform.position = new Vector3(deskPosition.x, deskPosition.y, deskPosition.z+0.1f); // 保持与锚点一致的高度
+                    deskPlane.transform.position = new Vector3(deskPosition.x, deskPosition.y, deskPosition.z + 0.1f); // 保持与锚点一致的高度
                     //deskPlane.transform.rotation = deskRotation; // 设置平面的旋转，使其方向与锚点一致
 
                     // 根据锚点的尺寸调整平面的大小
                     deskPlane.transform.localScale = new Vector3(anchorSize.y / 10f, 1, anchorSize.x / 10f); // Unity 的平面默认大小是 10x10 单位
- 
+
                     // 应用网格材质
                     if (gridMaterial != null)
                     {
                         Renderer renderer = deskPlane.GetComponent<Renderer>();
                         renderer.enabled = false; // 禁用渲染器，完全隐藏平面
-                /*        renderer.material = gridMaterial;
-                        //renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
-                        renderer.material.SetFloat("_Mode", 2); // 2 = Transparent mode
-                        renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
-                        renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                        renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                        renderer.material.SetInt("_ZWrite", 0);
-                        renderer.material.DisableKeyword("_ALPHATEST_ON");
-                        renderer.material.EnableKeyword("_ALPHABLEND_ON");
-                        renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        renderer.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;*/
+                        /*        renderer.material = gridMaterial;
+                                //renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
+                                renderer.material.SetFloat("_Mode", 2); // 2 = Transparent mode
+                                renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
+                                renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                                renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                                renderer.material.SetInt("_ZWrite", 0);
+                                renderer.material.DisableKeyword("_ALPHATEST_ON");
+                                renderer.material.EnableKeyword("_ALPHABLEND_ON");
+                                renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                                renderer.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;*/
                     }
                     // 使生成的平面仅用于可视化（如需要可以禁用其碰撞器）
                     //Destroy(deskPlane.GetComponent<Collider>());
@@ -319,8 +327,8 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                                     }*/
                     // 在平面上生成一个对象，距离摄像机水平距离40cm
                     objectPosition = cameraTransform.position + cameraTransform.forward * 0.5f; // 水平距离40cm
-                   // objectPosition.y = deskPosition.y; // 保持与平面一致的高度
-                    objectPosition.y = deskPosition.y + objectToSpawn.transform.localScale.y*2f; // 保持与平面一致的高度
+                                                                                                // objectPosition.y = deskPosition.y; // 保持与平面一致的高度
+                    objectPosition.y = deskPosition.y + objectToSpawn.transform.localScale.y * 2f; // 保持与平面一致的高度
                     // 在桌面上生成虚拟对象
                     SpawnedObject = Instantiate(objectToSpawn, objectPosition, Quaternion.identity);
                 }
@@ -379,7 +387,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
         //newObject1.transform.localScale = new Vector3(newObject1.transform.localScale.x * RestaurantTrScaleX, newObject1.transform.localScale.y * RestaurantTrScaleX, newObject1.transform.localScale.z * RestaurantTrScaleX);
         //newObject1.transform.position = new Vector3(newObject1.transform.position.x, newObject1.transform.position.y , newObject1.transform.position.z);
 
-        GameObject newObject2 = Instantiate(bottle2, new Vector3(deskPosition.x - 0.2f, deskPosition.y, deskPosition.z+0.1f), Quaternion.identity);
+        GameObject newObject2 = Instantiate(bottle2, new Vector3(deskPosition.x - 0.2f, deskPosition.y, deskPosition.z + 0.1f), Quaternion.identity);
         newObject2.transform.localScale = new Vector3(newObject2.transform.localScale.x * RestaurantTrScaleX, newObject2.transform.localScale.y * RestaurantTrScaleX, newObject2.transform.localScale.z * RestaurantTrScaleX);
         newObject2.transform.position = new Vector3(newObject2.transform.position.x, newObject2.transform.position.y + newObject2.transform.localScale.y * 1f, newObject2.transform.position.z);
 
