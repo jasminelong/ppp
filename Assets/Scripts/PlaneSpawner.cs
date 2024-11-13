@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Meta.XR.MRUtilityKit;
 using System.Linq;
-
+using TMPro;
 
 public class PlaneAndObjectSpawner : MonoBehaviour
 {
@@ -16,6 +16,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
     private Vector3 objectPosition;// 要生成的对象的位置
     public OVRFaceExpressions faceExpressions;
     public AudioSource audioSource;
+    public TextMeshPro mouthText;
 
     public OVRHand ovrHand;
     private OVRSkeleton ovrSkeleton;
@@ -39,7 +40,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
     private bool isInitialized = false; // 标志位
 
     private bool isMouthOpen = false;
-    private float mouthOpenThreshold = 0.5f;
+    private float mouthOpenThreshold = 0.2f;
     private float mouthOpenTime = 0f;
     private float requiredCloseTime = 0.1f; // 需要嘴巴闭合的时间来确认吃东西的动作
 
@@ -49,6 +50,8 @@ public class PlaneAndObjectSpawner : MonoBehaviour
     public GameObject bottle2;//放在桌上的瓶子
     public GameObject bottle3;//放在桌上的瓶子
     public GameObject bottle4;//放在桌上的瓶子
+    public Vector3 offset = new Vector3(0, 0, 3);  // 文本相对于玩家的位置偏移
+    private float jawDropWeight = 0f;
     IEnumerator Start()
     {
         // 等待几帧
@@ -73,6 +76,11 @@ public class PlaneAndObjectSpawner : MonoBehaviour
             noRoomCreatPlane();
         }
         isInitialized = true; // 初始化完成，设置标志位
+        mouthText.transform.position = cameraTr.transform.position + cameraTr.transform.forward * offset.z + offset;
+        mouthText.GetComponent<Renderer>().sortingOrder = 10; // 提升渲染层级
+        // 让文本始终面向玩家
+        mouthText.transform.LookAt(cameraTr.transform);
+        mouthText.transform.rotation = Quaternion.LookRotation(mouthText.transform.position - cameraTr.transform.position);
     }
 
     void Update()
@@ -95,20 +103,25 @@ public class PlaneAndObjectSpawner : MonoBehaviour
             if (faceExpressions != null && faceExpressions.ValidExpressions)
             {
                 // 获取下巴开合的权重值
-                float jawDropWeight = faceExpressions.GetWeight(OVRFaceExpressions.FaceExpression.JawDrop);
+                float isPositive = faceExpressions.GetWeight(OVRFaceExpressions.FaceExpression.JawDrop) - jawDropWeight;
+                jawDropWeight = faceExpressions.GetWeight(OVRFaceExpressions.FaceExpression.JawDrop);
                 Debug.Log("1111111111-----------"+ jawDropWeight);
                 Debug.Log("111111111122222-----------" + (Time.time - mouthOpenTime));
-                if (jawDropWeight > mouthOpenThreshold)
+
+                mouthText.text = "現在の口の開き具合は"+(jawDropWeight * 100f).ToString("F1") + "%";
+                //mouthText.text = "現在、" + jawDropWeight * 100 + "％開いています。";
+                if (jawDropWeight > mouthOpenThreshold && !isMouthOpen)
                 {
-                    if (!isMouthOpen)
-                    {
                         // 检测到嘴巴从闭合变为张开
                         isMouthOpen = true;
                         mouthOpenTime = Time.time;
-                    }
                 }
                 //else if (isMouthOpen && Time.time - mouthOpenTime >= requiredCloseTime)
-                else if (isMouthOpen)
+                if (isMouthOpen && Time.time - mouthOpenTime >= requiredCloseTime && isPositive < 0f)
+                {
+                    //mouthText.text = "現在、" + jawDropWeight * 100 + "%閉じています。";
+                }
+                if (isMouthOpen && Time.time - mouthOpenTime >= requiredCloseTime && isPositive<0f && jawDropWeight < mouthOpenThreshold)
                 {
                     // 检测到嘴巴闭合，并且时间间隔在合理范围内
                     Debug.Log("检测到吃东西的动作！");
@@ -308,25 +321,8 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                     {
                         Renderer renderer = deskPlane.GetComponent<Renderer>();
                         renderer.enabled = false; // 禁用渲染器，完全隐藏平面
-                        /*        renderer.material = gridMaterial;
-                                //renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
-                                renderer.material.SetFloat("_Mode", 2); // 2 = Transparent mode
-                                renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0f); // 设置透明度
-                                renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                                renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                                renderer.material.SetInt("_ZWrite", 0);
-                                renderer.material.DisableKeyword("_ALPHATEST_ON");
-                                renderer.material.EnableKeyword("_ALPHABLEND_ON");
-                                renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                                renderer.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;*/
+                         
                     }
-                    // 使生成的平面仅用于可视化（如需要可以禁用其碰撞器）
-                    //Destroy(deskPlane.GetComponent<Collider>());
-                    /*                if (deskAnchor.HasVolume)
-                                    {
-                                        Vector3 volumeSize = deskAnchor.VolumeBounds.Value.size;
-                                        Debug.Log("桌面体积尺寸: " + volumeSize);
-                                    }*/
                     // 在平面上生成一个对象，距离摄像机水平距离40cm
                     objectPosition = cameraTransform.position + cameraTransform.forward * 0.5f; // 水平距离40cm
                                                                                                 // objectPosition.y = deskPosition.y; // 保持与平面一致的高度
@@ -334,7 +330,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                     // 在桌面上生成虚拟对象
                     SpawnedObject = Instantiate(objectToSpawn, objectPosition, Quaternion.identity);
                 }
-                bottleSpawn();
+                //bottleSpawn();
             }
         }
         else
@@ -377,7 +373,7 @@ public class PlaneAndObjectSpawner : MonoBehaviour
         {
             SpawnedObject = Instantiate(objectToSpawn, objectPosition, Quaternion.identity);
         }
-        bottleSpawn();
+       // bottleSpawn();
     }
     void bottleSpawn()
     {

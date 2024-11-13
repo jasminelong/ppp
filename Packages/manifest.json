@@ -2,9 +2,11 @@
   "dependencies": {
     "com.meta.movement": "https://github.com/oculus-samples/Unity-Movement.git",
     "com.meta.xr.mrutilitykit": "65.0.0",
-    "com.meta.xr.sdk.all": "67.0.0",
+    "com.meta.xr.sdk.all": "69.0.1",
+    "com.meta.xr.sdk.avatars": "30.1.1",
     "com.unity.collab-proxy": "2.4.4",
     "com.unity.feature.development": "1.0.1",
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.unity.recorder": "4.0.3",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.7.6",
