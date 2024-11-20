@@ -105,10 +105,10 @@ public class PlaneAndObjectSpawner : MonoBehaviour
                 // 获取下巴开合的权重值
                 float isPositive = faceExpressions.GetWeight(OVRFaceExpressions.FaceExpression.JawDrop) - jawDropWeight;
                 jawDropWeight = faceExpressions.GetWeight(OVRFaceExpressions.FaceExpression.JawDrop);
-                Debug.Log("1111111111-----------"+ jawDropWeight);
+                Debug.Log("11111111-----------"+ jawDropWeight);
                 Debug.Log("111111111122222-----------" + (Time.time - mouthOpenTime));
 
-                mouthText.text = "現在の口の開き具合は"+(jawDropWeight * 100f).ToString("F1") + "%";
+                mouthText.text = "口の開き具合は"+(jawDropWeight * 100f).ToString("F1") + "%";
                 //mouthText.text = "現在、" + jawDropWeight * 100 + "％開いています。";
                 if (jawDropWeight > mouthOpenThreshold && !isMouthOpen)
                 {
