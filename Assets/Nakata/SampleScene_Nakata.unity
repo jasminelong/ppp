@@ -5124,7 +5124,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: e3a3610d45bb7114aa051968383a3153, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -5232,13 +5232,14 @@ MonoBehaviour:
   ovrHand: {fileID: 1722657411}
   stabbedSE: {fileID: 8300000, guid: 35f8bdfb68e75634e9281ae9610bf7b6, type: 3}
   poppingSE: {fileID: 8300000, guid: e3a3610d45bb7114aa051968383a3153, type: 3}
+  reactSE: {fileID: 8300000, guid: efd5d9bb821499a49a2b355075fd54ad, type: 3}
   attachmentDistance: 0.15
   objectPosition: {x: 0, y: 0, z: 0}
-  MouthOpenThreshold: 0.2
-  MouthCloseThreshold: 0.1
+  MouthOpenThreshold: 0.44
+  MouthCloseThreshold: 0.38
   MouthOpenRateThreshold: 0.02
   MouthCloseRateThreshold: -0.02
-  PopThreshold: 0.7
+  PopThreshold: 0.5
 --- !u!114 &337372972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7382,7 +7383,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7219146720840775118}

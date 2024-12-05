@@ -21,6 +21,10 @@ public class KushokuTeiEditorClass : MonoBehaviour
     // コントローラーからの入力を処理
     private void HandleControllerInput()
     {
+        if (!OVRInput.IsControllerConnected(OVRInput.Controller.Touch))
+        {
+            return;
+        }
         // Button.One でハンドトラッキングの追従状態を切り替え
         if (OVRInput.GetUp(OVRInput.Button.One)) // コントローラーのボタン1
         {

@@ -28,6 +28,7 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
     public OVRHand ovrHand;
     [SerializeField] AudioClip stabbedSE;
     [SerializeField] AudioClip poppingSE;
+    [SerializeField] AudioClip reactSE;
     private Dictionary<OVRSkeleton.BoneId, Transform> boneTransforms = new Dictionary<OVRSkeleton.BoneId, Transform>();
 
     private OVRSkeleton ovrSkeleton;
@@ -148,13 +149,12 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
                 isMouthOpen = false;
                 // オーディオ再生
                 Debug.Log("Mouth Close Detected");
-                
+                sendSerialData.SendData("Eated");
                 // 閉口時の処理
                 if (Vector3.Distance(SpawnedObject.transform.position, cameraTr.transform.position) < eatDistance && !hasEated)
                 {
-                    audioSource.PlayOneShot(poppingSE);
+                    
                     hasEated = true;
-                    sendSerialData.SendData("Eated");
                     Debug.Log("Eating Action Detected!");
                     HandleEating();
                 }
@@ -162,7 +162,7 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
             if (currentJawDropWeight > PopThreshold && jawDropRate < MouthCloseRateThreshold)
             {
                 // オーディオ再生
-                audioSource.PlayOneShot(poppingSE);
+                audioSource.PlayOneShot(reactSE);
                 Debug.Log("Maximum JawDrop Detected and Rate Turned Negative");
                 if (eatableAir != null) eatableAir.ChangeState(AirState.Popped);
             }
@@ -312,7 +312,7 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
 
         ResetAir();
         // コンポーネント取得
-        
+        audioSource.PlayOneShot(poppingSE);
 
         // 一定時間後に再生成
         StartCoroutine(RespawnObject());

@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Air_Outer 1
-  m_Shader: {fileID: -6465566751694194690, guid: a2c742baa3be78d4db431098b2d2d0ee, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: da91bae97fdbc9d4c860202119a6e8fb, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -41,7 +41,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Cloud:
-        m_Texture: {fileID: 2800000, guid: 3ef206cd015461d4885cdb70fc5c21d5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 516ca931b2e20394a91e57347bde416b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DFG:
@@ -89,7 +89,7 @@ Material:
     - _BUILTIN_QueueControl: 1
     - _BUILTIN_QueueOffset: 6
     - _BumpScale: 1
-    - _CloudDepth: 1.74
+    - _CloudDepth: 1.77
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -98,7 +98,7 @@ Material:
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseSpeed: 0.09
+    - _NoiseSpeed: 0.52
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueControl: 0
@@ -106,14 +106,14 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Strength: 0.06
-    - _Threshold: 0.343
-    - _Transparent: 0.806
+    - _Strength: 0.03
+    - _Threshold: 0.293
+    - _Transparent: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.07539296, g: 1, b: 0, a: 1}
+    - _Color: {r: 0.7168444, g: 1, b: 0.18431371, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Scroll: {r: 0.4, g: 0.2, b: 0, a: 0}
+    - _Scroll: {r: 0.7, g: 0.2, b: 0, a: 0}
     - _Scroll2: {r: 0.3, g: 0.2, b: 0, a: 0}
   m_BuildTextureStacks: []
