@@ -5,6 +5,7 @@ using TMPro;
 using Meta.XR.MRUtilityKit;
 using System;
 using System.Linq;
+using UnityEngine.ProBuilder;
 
 public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
         Initialized,
         Editable
     }
+
+    
     public SendSerialData sendSerialData;
     public Camera cameraTr;
     public Material gridMaterial; // 网格材质
@@ -33,7 +36,7 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
     private float objectOffsetFromHand = 0.1f; // 对象与手部的偏移距离
     private Vector3 deskPosition;
     private GameObject deskPlane;
-    private Vector3 objectPosition;// 要生成的对象的位置
+    public Vector3 objectPosition;// 要生成的对象的位置
     private float bendThresholdAngle = 15.0f; // 角度阈值，降低阈值以提高检测敏感性
     private bool skeletonInitialized = false;
 
@@ -53,7 +56,27 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
     private float eatDistance = 0.3f; // オブジェクトと口の距離閾値
     EatableAir eatableAir;
     ScriptState scriptState = ScriptState.NotInit;
-
+    public void ChangeAttaching(bool isAttached, Transform attachingTransform,Vector3 normal = default)
+    {
+        this.isAttached = isAttached;
+        if (isAttached)
+        {
+            // 将对象附加到手部对象上
+            SpawnedObject.transform.SetParent(attachingTransform);
+            Vector3 offsetPosition = normal * objectOffsetFromHand;
+            // 将对象的局部位置设置为计算出的偏移位置
+            SpawnedObject.transform.localPosition = Vector3.SmoothDamp(SpawnedObject.transform.localPosition, offsetPosition, ref velocity, 0.2f);
+            // 重置对象的局部旋转
+            SpawnedObject.transform.localRotation = Quaternion.identity;
+            audioSource.PlayOneShot(stabbedSE);
+        }
+        else
+        {
+            isAttached = false;
+            // 将对象附加到手部对象上
+            SpawnedObject.transform.SetParent(null);
+        }
+    }
     IEnumerator Start()
     {
         // 等待几帧
@@ -125,23 +148,24 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
                 isMouthOpen = false;
                 // オーディオ再生
                 Debug.Log("Mouth Close Detected");
-                if (currentJawDropWeight > PopThreshold && jawDropRate < MouthCloseRateThreshold)
-                {
-                    // オーディオ再生
-                    audioSource.PlayOneShot(poppingSE);
-                    Debug.Log("Maximum JawDrop Detected and Rate Turned Negative");
-                    if (eatableAir != null) eatableAir.ChangeState(AirState.Popped);
-                }
+                
                 // 閉口時の処理
                 if (Vector3.Distance(SpawnedObject.transform.position, cameraTr.transform.position) < eatDistance && !hasEated)
                 {
+                    audioSource.PlayOneShot(poppingSE);
                     hasEated = true;
                     sendSerialData.SendData("Eated");
                     Debug.Log("Eating Action Detected!");
                     HandleEating();
                 }
             }
-            
+            if (currentJawDropWeight > PopThreshold && jawDropRate < MouthCloseRateThreshold)
+            {
+                // オーディオ再生
+                audioSource.PlayOneShot(poppingSE);
+                Debug.Log("Maximum JawDrop Detected and Rate Turned Negative");
+                if (eatableAir != null) eatableAir.ChangeState(AirState.Popped);
+            }
 
             // JawDrop値を更新
             previousJawDropWeight = currentJawDropWeight;
@@ -236,6 +260,19 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
         }
 
     }
+    public void ForceAttach()
+    {
+        Transform Hand_Thumb2Transform;
+        try
+        {
+             Hand_Thumb2Transform = GetBoneTransform(OVRSkeleton.BoneId.Hand_Thumb2);
+        }
+        catch(Exception e)
+        {
+            return;
+        }
+        ChangeAttaching(true, Hand_Thumb2Transform);
+    }
     bool IsFingerBent(OVRSkeleton.BoneId fingerBase, OVRSkeleton.BoneId fingerMid, OVRSkeleton.BoneId fingerTip)
     {
         Transform baseTransform = GetBoneTransform(fingerBase);
@@ -272,23 +309,30 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
 
     void HandleEating()
     {
-        
 
-        // オブジェクトを非アクティブ化
-        SpawnedObject.SetActive(false);
-        SpawnedObject.transform.SetParent(null);
+        ResetAir();
         // コンポーネント取得
         
 
         // 一定時間後に再生成
         StartCoroutine(RespawnObject());
     }
+    public void ResetAir()
+    {
+        SpawnedObject.transform.position = objectPosition;
+        // オブジェクトを非アクティブ化
+        SpawnedObject.SetActive(false);
+        SpawnedObject.transform.SetParent(null);
+        StartCoroutine(RespawnObject());
+    }
 
     IEnumerator RespawnObject()
     {
         yield return new WaitForSeconds(2f);
+       
         SpawnedObject.SetActive(true);
         hasEated = false;
+        isAttached = false;
         Debug.Log("Object Respawned!");
     }
 

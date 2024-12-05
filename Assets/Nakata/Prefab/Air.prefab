@@ -5324,6 +5324,8 @@ MonoBehaviour:
   stabbedSE: {fileID: 8300000, guid: 35f8bdfb68e75634e9281ae9610bf7b6, type: 3}
   poppingSEs:
   - {fileID: 8300000, guid: e3a3610d45bb7114aa051968383a3153, type: 3}
+  floatSpeed: 1
+  floatRange: 0.0001
 --- !u!82 &5721137046266411789
 AudioSource:
   m_ObjectHideFlags: 0
