@@ -5,7 +5,6 @@ using TMPro;
 using Meta.XR.MRUtilityKit;
 using System;
 using System.Linq;
-using UnityEditor.Overlays;
 
 public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
 {
@@ -24,6 +23,8 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
     public AudioSource audioSource;
     public TextMeshPro mouthText;
     public OVRHand ovrHand;
+    [SerializeField] AudioClip stabbedSE;
+    [SerializeField] AudioClip poppingSE;
     private Dictionary<OVRSkeleton.BoneId, Transform> boneTransforms = new Dictionary<OVRSkeleton.BoneId, Transform>();
 
     private OVRSkeleton ovrSkeleton;
@@ -127,7 +128,7 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
                 if (currentJawDropWeight > PopThreshold && jawDropRate < MouthCloseRateThreshold)
                 {
                     // オーディオ再生
-                    audioSource.Play();
+                    audioSource.PlayOneShot(poppingSE);
                     Debug.Log("Maximum JawDrop Detected and Rate Turned Negative");
                     if (eatableAir != null) eatableAir.ChangeState(AirState.Popped);
                 }
@@ -228,7 +229,7 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
                     SpawnedObject.transform.localPosition = Vector3.SmoothDamp(SpawnedObject.transform.localPosition, offsetPosition, ref velocity, 0.2f);
                     // 重置对象的局部旋转
                     SpawnedObject.transform.localRotation = Quaternion.identity;
-
+                    audioSource.PlayOneShot(stabbedSE);
                 }
 
             }
@@ -275,7 +276,7 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
 
         // オブジェクトを非アクティブ化
         SpawnedObject.SetActive(false);
-
+        SpawnedObject.transform.SetParent(null);
         // コンポーネント取得
         
 

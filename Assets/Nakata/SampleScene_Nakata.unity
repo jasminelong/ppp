@@ -5728,6 +5728,8 @@ MonoBehaviour:
   audioSource: {fileID: 337372970}
   mouthText: {fileID: 0}
   ovrHand: {fileID: 1722657411}
+  stabbedSE: {fileID: 8300000, guid: 35f8bdfb68e75634e9281ae9610bf7b6, type: 3}
+  poppingSE: {fileID: 8300000, guid: e3a3610d45bb7114aa051968383a3153, type: 3}
   attachmentDistance: 0.15
   MouthOpenThreshold: 0.2
   MouthCloseThreshold: 0.1
