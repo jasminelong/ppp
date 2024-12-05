@@ -5236,7 +5236,7 @@ MonoBehaviour:
   attachmentDistance: 0.15
   objectPosition: {x: 0, y: 0, z: 0}
   MouthOpenThreshold: 0.44
-  MouthCloseThreshold: 0.38
+  MouthCloseThreshold: 0.57
   MouthOpenRateThreshold: 0.02
   MouthCloseRateThreshold: -0.02
   PopThreshold: 0.5
@@ -7422,6 +7422,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e3a3610d45bb7114aa051968383a3153, type: 3}
   floatSpeed: 1
   floatRange: 0.0001
+  shrinkSpeed: 0.5
+  moveSpeed: 0.02
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

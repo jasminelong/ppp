@@ -5325,6 +5325,8 @@ MonoBehaviour:
   poppingSEs: []
   floatSpeed: 1
   floatRange: 0.0001
+  shrinkSpeed: 0.8
+  moveSpeed: 0.04
 --- !u!82 &5721137046266411789
 AudioSource:
   m_ObjectHideFlags: 0

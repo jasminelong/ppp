@@ -55,6 +55,7 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
 
     private bool hasEated = false; // 一度食べた状態を保持
     private float eatDistance = 0.3f; // オブジェクトと口の距離閾値
+    private Vector3 defaultScale;
     EatableAir eatableAir;
     ScriptState scriptState = ScriptState.NotInit;
     public void ChangeAttaching(bool isAttached, Transform attachingTransform,Vector3 normal = default)
@@ -161,10 +162,14 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
             }
             if (currentJawDropWeight > PopThreshold && jawDropRate < MouthCloseRateThreshold)
             {
-                // オーディオ再生
-                audioSource.PlayOneShot(reactSE);
-                Debug.Log("Maximum JawDrop Detected and Rate Turned Negative");
-                if (eatableAir != null) eatableAir.ChangeState(AirState.Popped);
+                if (Vector3.Distance(SpawnedObject.transform.position, cameraTr.transform.position) < eatDistance && !hasEated)
+                {
+
+                    // オーディオ再生
+                    audioSource.PlayOneShot(reactSE);
+                    Debug.Log("Maximum JawDrop Detected and Rate Turned Negative");
+                }
+                
             }
 
             // JawDrop値を更新
@@ -310,18 +315,21 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
     void HandleEating()
     {
 
+        //Transform faceTransform = GetBoneTransform(OVRSkeleton.BoneId.FullBody_Head);
+        //if (eatableAir != null) StartCoroutine(eatableAir.Pop(ResetAir, faceTransform));
         ResetAir();
         // コンポーネント取得
         audioSource.PlayOneShot(poppingSE);
 
         // 一定時間後に再生成
-        StartCoroutine(RespawnObject());
+        //StartCoroutine(RespawnObject());
     }
     public void ResetAir()
     {
         SpawnedObject.transform.position = objectPosition;
         // オブジェクトを非アクティブ化
         SpawnedObject.SetActive(false);
+        SpawnedObject.transform.localScale = defaultScale;
         SpawnedObject.transform.SetParent(null);
         StartCoroutine(RespawnObject());
     }
@@ -384,6 +392,7 @@ public class PlaneAndObjectSpawner_Nakata : MonoBehaviour
                     objectPosition.y = deskPosition.y + objectToSpawn.transform.localScale.y / 2; // 保持与平面一致的高度
                     // 在桌面上生成虚拟对象
                     SpawnedObject = Instantiate(objectToSpawn, objectPosition, Quaternion.identity);
+                    defaultScale = SpawnedObject.transform.localScale;
                     eatableAir = SpawnedObject.GetComponent<EatableAir>();
                 }
                 //bottleSpawn();
