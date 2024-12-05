@@ -385,7 +385,7 @@ MonoBehaviour:
   sendSerialData: {fileID: 118434937}
   cameraTr: {fileID: 2057086641}
   gridMaterial: {fileID: 2100000, guid: b383ba431317cca40abec65cdac3b5a1, type: 2}
-  objectToSpawn: {fileID: 3511151648069710002, guid: 204587b00309b5e4484ecbceecafb985, type: 3}
+  objectToSpawn: {fileID: 7108397649006768186, guid: 8b3d73edbabc90045a92ff57eecbfba1, type: 3}
   faceExpressions: {fileID: 337372968}
   audioSource: {fileID: 337372970}
   mouthText: {fileID: 557134324}
@@ -395,7 +395,7 @@ MonoBehaviour:
   bottle2: {fileID: 5218775785321610618, guid: 394c2044432d00f4081644bd756dbaa8, type: 3}
   bottle3: {fileID: 5538389914758975819, guid: 875e354c65fff21438d25b63fee12511, type: 3}
   bottle4: {fileID: 5538389914758975819, guid: 875e354c65fff21438d25b63fee12511, type: 3}
-  offset: {x: 0, y: 0, z: 2}
+  offset: {x: 0, y: -1, z: 0}
 --- !u!4 &337372967
 Transform:
   m_ObjectHideFlags: 0
@@ -798,7 +798,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &557134324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -967,7 +967,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &625919963
 Transform:
   m_ObjectHideFlags: 0
@@ -1514,6 +1514,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 126d619cf4daa52469682f85c1378b4a, type: 3}
+      propertyPath: _monoscopic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 126d619cf4daa52469682f85c1378b4a, type: 3}
       propertyPath: isInsightPassthroughEnabled
       value: 1
       objectReference: {fileID: 0}
@@ -1532,6 +1536,14 @@ PrefabInstance:
     - target: {fileID: 11400000, guid: 126d619cf4daa52469682f85c1378b4a, type: 3}
       propertyPath: requestFaceTrackingPermissionOnStartup
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400010, guid: 126d619cf4daa52469682f85c1378b4a, type: 3}
+      propertyPath: usePerEyeCameras
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400010, guid: 126d619cf4daa52469682f85c1378b4a, type: 3}
+      propertyPath: disableEyeAnchorCameras
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
