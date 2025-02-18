@@ -57,4 +57,7 @@ cd your-repo-name
 ![微信图片_20250218154731](https://github.com/user-attachments/assets/13c7d6a9-e724-47e4-bd45-eee6288ee3a6)
 
 
-https://ipsj.ixsq.nii.ac.jp/records/238797
+https://ipsj.ixsq.nii.ac.jp/records/238797  
+[2024年度メタバースコンペティション](https://vr.u-tokyo.ac.jp/2025/01/14/%e9%96%8b%e5%82%ac%e5%a0%b1%e5%91%8a-2024%e5%b9%b4%e5%ba%a6%e3%83%a1%e3%82%bf%e3%83%90%e3%83%bc%e3%82%b9%e3%82%b3%e3%83%b3%e3%83%9a%e3%83%86%e3%82%a3%e3%82%b7%e3%83%a7%e3%83%b3/)
+
+
